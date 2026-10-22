@@ -1,0 +1,109 @@
+/* Lingo's interface palette. Layout, motion and member-selected themes stay local
+   to their existing components; legacy color token names are compatibility aliases. */
+:root {
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f2f4f5;
+  --text: #232824;
+  --muted: #6c746e;
+  --line: #e0e4dd;
+  --accent: #49687c;
+  --accent-soft: #e8eff2;
+  --pink: var(--accent);
+  --pink-soft: var(--accent-soft);
+  --purple-soft: #edf0f3;
+  --purple-ink: #5c6478;
+  --green-soft: #edf1ed;
+  --green-ink: #4e6857;
+  --blue-soft: var(--accent-soft);
+  --blue-ink: var(--accent);
+  --yellow-soft: #f2efe6;
+  --yellow-ink: #7a6844;
+  --action-bg: #252c28;
+  --action-ink: #fcfcf7;
+  --on-accent: var(--action-ink);
+  --shadow: 0 8px 26px #202a2408;
+  --home-growth-bg: #fff1f5;
+  --home-quick-bg: #edf7ff;
+}
+
+:root[data-theme="dark"] {
+  --bg: #151918;
+  --surface: #1d2321;
+  --surface-soft: #252d29;
+  --text: #eef0ec;
+  --muted: #a9b4ae;
+  --line: #36413a;
+  --accent: #9ab7c9;
+  --accent-soft: #29373e;
+  --pink: var(--accent);
+  --pink-soft: var(--accent-soft);
+  --purple-soft: #2c323c;
+  --purple-ink: #bac4d6;
+  --green-soft: #27372d;
+  --green-ink: #b1c7b5;
+  --blue-soft: var(--accent-soft);
+  --blue-ink: var(--accent);
+  --yellow-soft: #363328;
+  --yellow-ink: #d4c8aa;
+  --action-bg: #e4e8e1;
+  --action-ink: #1c2420;
+  --shadow: 0 8px 26px #0002;
+  --home-growth-bg: #30262b;
+  --home-quick-bg: #24323c;
+}
+
+.hero-grid>.cultivation-card,
+.hero-grid>.hero-water-card { background: var(--home-growth-bg); }
+.quick-grid>.quick-card { background-color: var(--home-quick-bg); }
+::selection { background: var(--accent-soft); color: var(--text); }
+.site-header {
+  --nav-bg: #f6f8fa;
+  --nav-text: #29322d;
+  --nav-muted: #68716a;
+  --nav-hover: #e9ede7;
+  --nav-active: #e3ebef;
+  --nav-active-text: #3c5d70;
+  --nav-line: #dfe4dc;
+  --nav-shadow: #263c2e08;
+  background: linear-gradient(115deg, #ffffff, var(--nav-bg) 65%);
+  box-shadow: 0 4px 20px #263c2e05;
+}
+:root[data-theme="dark"] .site-header {
+  --nav-bg: #1b211e;
+  --nav-text: #eef0ec;
+  --nav-muted: #adb7af;
+  --nav-hover: #29332d;
+  --nav-active: #2b3b43;
+  --nav-active-text: #bdd3df;
+  --nav-line: #354038;
+  --nav-shadow: #0002;
+  background: linear-gradient(115deg, #202722, var(--nav-bg) 65%);
+  box-shadow: 0 4px 20px #0001;
+}
+.ambient-base { background-image: radial-gradient(circle, #53655b26 .7px, transparent .8px); }
+.ambient-color { background-image: radial-gradient(circle, #6b91a83d 1px, transparent 1.2px); }
+.hero-card:after {
+  border-color: color-mix(in srgb, var(--accent) 11%, transparent);
+  box-shadow: 0 0 0 35px color-mix(in srgb, var(--accent) 2%, transparent),
+    0 0 0 70px color-mix(in srgb, var(--accent) 1%, transparent);
+}
+.primary { background: var(--action-bg); color: var(--action-ink); }
+.button:hover { box-shadow: 0 6px 17px #263c2e12; }
+.hero-search { box-shadow: 0 3px 10px #263c2e03; }
+.avatar, .profile-avatar { background: var(--accent-soft); color: var(--accent); }
+.purple { color: var(--purple-ink); }
+.green { color: var(--green-ink); }
+.yellow { color: var(--yellow-ink); }
+.blue { color: var(--blue-ink); }
+.smart-banner { background: linear-gradient(115deg, var(--accent-soft), var(--surface)); }
+.smart-icon { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 25%, transparent); }
+.match-summary { color: var(--accent); background: var(--accent-soft); }
+.course-index, .course-art>svg { color: var(--purple-ink); }
+.course-art:after { border-color: color-mix(in srgb, var(--purple-ink) 20%, transparent); }
+.course-card.green .course-index, .lesson-check.done { color: var(--green-ink); }
+.status.published, .status.approved { color: var(--green-ink); }
+.status.draft, .status.pending, .featured-on, .next-step>span { color: var(--yellow-ink); }
+.community-guide>svg { color: var(--accent); }
+.modal-overlay { background: #111b1665; }
+:root[data-theme="dark"] .brand-mark { background: #f7f7f2; }

@@ -1,0 +1,111 @@
+[
+  {
+    "brand": "linear",
+    "file": "linear-light.svg",
+    "source": "https://linear.app/brand",
+    "archive_member": "wordmark-dark.svg",
+    "sha256": "6b8c0756d1dc581364c4a91782fc512727e4c47c7bacdfb7f4fbbab1d99c5066",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "linear",
+    "file": "linear-dark.svg",
+    "source": "https://linear.app/brand",
+    "archive_member": "wordmark-light.svg",
+    "sha256": "38edb7e21a41025b9c9c173557ddc2dac97bb0c3d977a2aab75d3586170f08ff",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "framer",
+    "file": "framer-light.svg",
+    "source": "https://www.framer.com/brand",
+    "archive_member": "Framer Logos/Framer Wordmark/Framer Wordmark Black.svg",
+    "sha256": "5a3fbf402d3703f423f96c7826a183c9de7c7b9ba4da2ed6f61e46a4e9fe9050",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "framer",
+    "file": "framer-dark.svg",
+    "source": "https://www.framer.com/brand",
+    "archive_member": "Framer Logos/Framer Wordmark/Framer Wordmark White.svg",
+    "sha256": "f285723b39b29441f1bdf50090d01fe43ff9040860fffb34f6ee9f601ebc5d4b",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "nextjs",
+    "file": "nextjs-light.svg",
+    "source": "https://vercel.com/geist/brands",
+    "archive_member": "NEXTJS/logotype/light-background/nextjs-logotype-light-background.svg",
+    "sha256": "603d77738f767d2afa37e225da1407dbdb2cd92e76695f010316910ae1e88761",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "nextjs",
+    "file": "nextjs-dark.svg",
+    "source": "https://vercel.com/geist/brands",
+    "archive_member": "NEXTJS/logotype/dark-background/nextjs-logotype-dark-background.svg",
+    "sha256": "2af00f1d0893448c088b80b6c97c9a4ddab417278eced4cdc544a9deaca2e88f",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "github",
+    "file": "github-light.svg",
+    "source": "https://brand.github.com/foundations/logo",
+    "archive_member": "GitHub Logos/SVG/GitHub_Lockup_Black.svg",
+    "sha256": "802172fd58f2956be454f45e07c351d5c3d6830554632796b8f16fcecc7d273b",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "github",
+    "file": "github-dark.svg",
+    "source": "https://brand.github.com/foundations/logo",
+    "archive_member": "GitHub Logos/SVG/GitHub_Lockup_White.svg",
+    "sha256": "d26a77282b5f0fc5e36d52aa64d0a8dfeb042dab5b65802805ce83373d72f5f5",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "supabase",
+    "file": "supabase-light.svg",
+    "source": "https://supabase.com/brand-assets",
+    "archive_member": "brand-assets/supabase-logo-wordmark--light.svg",
+    "sha256": "48fec684d8f9f7b0f93fa94fb4fbaa195d3cb299263c3c0fdaea11b43745ceb3",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "supabase",
+    "file": "supabase-dark.svg",
+    "source": "https://supabase.com/brand-assets",
+    "archive_member": "brand-assets/supabase-logo-wordmark--dark.svg",
+    "sha256": "6d57804518b7d5b9dadf767cd277e1a389980e1b8cf53138abe01365c8b81628",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "figma",
+    "file": "figma.svg",
+    "source": "https://www.figma.com/using-the-figma-brand/",
+    "archive_member": "Figma Brand Assets/Figma Icon (Full-color)/Figma Icon (Full-color).svg",
+    "sha256": "9798b710e015c7f3fa6101779e323568d6a5a022651d427021262ce850467b07",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "notion",
+    "file": "notion.png",
+    "source": "https://www.notion.com/front-static/logo-ios.png",
+    "sha256": "483846a85e43e22879445047b83b22033e70fcc25ab34809ebadb7f856507ee0",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "react",
+    "file": "react-logo_light.svg",
+    "source": "https://raw.githubusercontent.com/reactjs/react.dev/main/public/images/brand/logo_light.svg",
+    "sha256": "ebdfad4916a4c4b5ec0bdf80fe9c8476a7cb8b7e925e502f78260098cd65a543",
+    "unchanged_official_file": true
+  },
+  {
+    "brand": "react",
+    "file": "react-logo_dark.svg",
+    "source": "https://raw.githubusercontent.com/reactjs/react.dev/main/public/images/brand/logo_dark.svg",
+    "sha256": "e5278257e728c9527af74185f73f0715ffde03d713512aded478d832665e8f24",
+    "unchanged_official_file": true
+  }
+]

@@ -1,0 +1,25 @@
+# Dependencies and generated output
+node_modules/
+.next/
+out/
+public/pdfjs/
+*.tsbuildinfo
+*.log
+.DS_Store
+Thumbs.db
+
+# Local configuration and credentials
+.env*
+!.env.example
+.codex/
+.openai/
+.sites-runtime/
+.supabase/
+supabase/.temp/
+
+# Operational exports, backups and release archives
+/work/
+/exports/
+/backups/
+*.zip
+*-private.json

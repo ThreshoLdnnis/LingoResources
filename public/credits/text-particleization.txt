@@ -1,0 +1,10 @@
+Homepage greeting interaction reference
+
+Da0Mine / text-particleization
+https://github.com/Da0Mine/text-particleization
+
+The reference demonstrates sampling text pixels into particles, pointer repulsion
+and spring return. Our React component adapts this interaction concept for a
+bounded homepage heading, with semantic HTML text, theme support, motion
+preferences, idle rendering, visibility handling and responsive typography.
+The original full-screen demo, text input and UI are not bundled.

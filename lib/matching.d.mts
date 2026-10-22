@@ -1,0 +1,13 @@
+import type { Resource } from "./data";
+export const domesticCities: string[];
+export const internationalCities: string[];
+export const discoveryInterests: string[];
+export type MatchPreferences={text?:string;goal?:string;tags?:string[];location?:string;level?:string;horizon?:string;price?:string;includeOnline?:boolean;personalize?:boolean};
+export type MatchContext={interests?:string[];favorites?:string[];completed?:string[];now?:Date|string};
+export type Recommendation={resource:Resource;score:number;matched:string[];reasons:string[];notes:string[]};
+export type Intent={goal?:string;tags:string[];location?:string;cities:string[];level?:string;horizon?:string;freeOnly:boolean;excluded:string[];keywords:string[]};
+export function matchesLocation(location:string, selected:string):boolean;
+export function understandRequest(text:string):Intent;
+export function recommendResources(resources:Resource[],preferences?:MatchPreferences,context?:MatchContext):{rows:Recommendation[];path:{title:string;description:string;match:Recommendation|null}[];excluded:Record<string,number>;preferences:{goal:string;location:string;level:string;horizon:string;freeOnly:boolean;tags:string[]};intent:Intent;today:string};
+export function rankResources(resources:Resource[],goal:string,interests:string[]):Recommendation[];
+export function filterResources(resources:Resource[],query:string,kind:string,location:string,sort:string):Resource[];

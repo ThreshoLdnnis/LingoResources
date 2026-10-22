@@ -1,0 +1,95 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {PGlite} from '@electric-sql/pglite';
+import {canRegisterResource,ownsContent,postDraft} from '../lib/community-rules.mjs';
+
+test('Registration defaults off, external internships never use platform applications, author controls cannot belong to a guest',()=>{
+ const event={kind:'competition',status:'published',deadline:'2027-01-20'};
+ assert.equal(canRegisterResource(event,'2026-10-14'),false);
+ assert.equal(canRegisterResource({...event,application_enabled:true},'2026-10-14'),true);
+ assert.equal(canRegisterResource({...event,kind:'internship',application_enabled:true},'2026-10-14'),false);
+ assert.equal(canRegisterResource({...event,status:'draft',application_enabled:true},'2026-10-14'),false);
+ assert.equal(canRegisterResource({...event,deadline:'2026-10-13',application_enabled:true},'2026-10-14'),false);
+ assert.equal(ownsContent(undefined,undefined,true),false);
+ assert.equal(ownsContent('a','b',true),false);
+ assert.equal(ownsContent('a','a',true),true);
+ assert.equal(ownsContent('demo',undefined,true),false);
+ const form=new FormData();form.set('title','   ');form.set('body',' '.repeat(25));form.set('type','discussion');
+ assert.throws(()=>postDraft(form),/标题/);
+ form.set('title','一条动态');assert.throws(()=>postDraft(form),/正文/);
+});
+
+test('Two accounts cannot edit each other’s posts, comments or profiles; soft removal preserves applications',async()=>{
+ const db=await PGlite.create();
+ try{
+  await db.exec(`create role anon;create role authenticated;create schema auth;create schema storage;
+   create table auth.users(id uuid primary key,email varchar(255),created_at timestamptz not null default now(),raw_user_meta_data jsonb not null default '{}');
+   create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('test.uid',true),'')::uuid$$;
+   grant usage on schema auth,public,storage to anon,authenticated;grant execute on function auth.uid() to anon,authenticated;
+   create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
+   create table storage.objects(id uuid default gen_random_uuid(),bucket_id text,name text);alter table storage.objects enable row level security;
+   create function storage.foldername(name text) returns text[] language sql immutable as $$select string_to_array(name,'/')$$;
+   grant select,insert,delete on storage.objects to anon,authenticated;`);
+  const folder=new URL('../supabase/migrations/',import.meta.url);
+  for(const file of (await fs.readdir(folder)).filter(f=>f.endsWith('.sql')).sort())await db.exec(await fs.readFile(new URL(file,folder),'utf8'));
+  await db.exec(await fs.readFile(new URL('../supabase/seed.sql',import.meta.url),'utf8'));
+  const a='91111111-1111-4111-8111-111111111101',b='91111111-1111-4111-8111-111111111102',admin='91111111-1111-4111-8111-111111111103';
+  for(const id of [a,b,admin]){
+   const code='community-'+id;
+   await db.query("insert into private.beta_invites(code_hash,code_hint,label,expires_at) values(private.beta_invite_hash($1),'test','fixture',now()+interval '1 day')",[code]);
+   await db.query('insert into auth.users(id,raw_user_meta_data) values($1,$2)',[id,{beta_invite_code:code}]);
+  }
+  await db.query("update public.profiles set role='admin' where id=$1",[admin]);
+  const asUser=async id=>{await db.exec('reset role');await db.query("select set_config('test.uid',$1,false)",[id||'']);await db.exec('set role '+(id?'authenticated':'anon'));};
+  await asUser(a);
+  await db.query("update public.profiles set name='道友 A',avatar_url='https://example.com/a.png' where id=$1",[a]);
+  const post='92111111-1111-4111-8111-111111111101';
+  await db.query("insert into public.posts(id,owner_id,author,avatar,title,body,type) values($1,$2,'伪造其他人','假','校园赛事组队','这是一个完整的赛事组队介绍，欢迎一起交流讨论。','recruitment')",[post,a]);
+  let row=(await db.query('select * from public.posts where id=$1',[post])).rows[0];
+  assert.equal(row.author,'道友 A');assert.equal(row.avatar_url,'https://example.com/a.png');
+  await db.query("update public.posts set title='更新后的赛事组队标题' where id=$1",[post]);
+  assert.equal((await db.query('select title from public.posts where id=$1',[post])).rows[0].title,'更新后的赛事组队标题');
+  await assert.rejects(()=>db.query('update public.posts set owner_id=$1 where id=$2',[b,post]),/permission denied|immutable/);
+  await assert.rejects(()=>db.query("insert into public.applications(user_id,post_id,name,message) values($1,$2,'自己','不能申请加入自己发布的招募')",[a,post]),/row-level security/);
+  await asUser(b);
+  await db.query("update public.profiles set name='道友 B',avatar_url='https://example.com/b.png' where id=$1",[b]);
+  assert.equal((await db.query("update public.posts set body='这是一次越权修改其他账号的帖子，必须被阻止。' where id=$1 returning id",[post])).rows.length,0);
+  assert.equal((await db.query('update public.posts set deleted_at=now() where id=$1 returning id',[post])).rows.length,0);
+  assert.equal((await db.query("update public.profiles set bio='越权改资料' where id=$1 returning id",[a])).rows.length,0);
+  await assert.rejects(()=>db.query('insert into public.post_comments(post_id,owner_id,body) values($1,$2,$3)',[post,a,'伪造评论作者']),/Only the author|row-level security/);
+  const comment=(await db.query('insert into public.post_comments(post_id,owner_id,body,author,avatar_url) values($1,$2,$3,$4,$5) returning *',[post,b,'我擅长设计，想一起组队！','伪造昵称','https://example.com/fake.png'])).rows[0];
+  assert.equal(comment.author,'道友 B');assert.equal(comment.avatar_url,'https://example.com/b.png');
+  await db.query('update public.post_comments set body=$1 where id=$2',['我擅长产品设计，每周可以投入六小时。',comment.id]);
+  await db.query("update public.post_comments set author='道友 A',avatar_url='https://example.com/a.png' where id=$1",[comment.id]);
+  assert.equal((await db.query('select author,avatar_url from public.post_comments where id=$1',[comment.id])).rows[0].author,'道友 B');
+  await assert.rejects(()=>db.query('update public.post_comments set owner_id=$1 where id=$2',[a,comment.id]),/permission denied|immutable/);
+  await assert.rejects(()=>db.query('update public.post_comments set post_id=gen_random_uuid() where id=$1',[comment.id]),/permission denied|immutable/);
+  await assert.rejects(()=>db.query('insert into public.post_comments(post_id,owner_id,body) values($1,$2,$3)',[post,b,'   ']),/check constraint/);
+  await db.query("update public.profiles set name='新昵称 B',avatar_url='https://example.com/new-b.png' where id=$1",[b]);
+  row=(await db.query('select author,avatar_url from public.post_comments where id=$1',[comment.id])).rows[0];
+  assert.equal(row.author,'新昵称 B');assert.equal(row.avatar_url,'https://example.com/new-b.png');
+  await db.query("insert into public.applications(user_id,post_id,name,message) values($1,$2,'申请者','我想参与这项团队任务，希望一起完成项目。')",[b,post]);
+  const removed=(await db.query('insert into public.post_comments(post_id,owner_id,body) values($1,$2,$3) returning id',[post,b,'自己可以删除这一条评论'])).rows[0].id;
+  await db.query('update public.post_comments set deleted_at=now() where id=$1',[removed]);
+  await asUser(null);
+  await assert.rejects(()=>db.query('select id from public.post_comments where id=$1',[comment.id]),/permission denied/);
+  await assert.rejects(()=>db.query('insert into public.post_comments(post_id,owner_id,body) values($1,$2,$3)',[post,a,'游客越权评论']),/permission denied/);
+  await asUser(a);
+  assert.equal((await db.query('select id from public.post_comments where id=$1',[removed])).rows.length,0);
+  assert.equal((await db.query('select id from public.post_comments where id=$1',[comment.id])).rows.length,1);
+  assert.equal((await db.query("update public.post_comments set body='不能修改其他人的评论' where id=$1 returning id",[comment.id])).rows.length,0);
+  assert.equal((await db.query('update public.post_comments set deleted_at=now() where id=$1 returning id',[comment.id])).rows.length,0);
+  await db.query('update public.posts set deleted_at=now() where id=$1 returning id',[post]);
+  await asUser(b);
+  assert.equal((await db.query('select id from public.posts where id=$1',[post])).rows.length,0);
+  assert.equal((await db.query('select id from public.post_comments where post_id=$1',[post])).rows.length,0);
+  assert.equal((await db.query('select id from public.applications where post_id=$1',[post])).rows.length,1);
+  await assert.rejects(()=>db.query('insert into public.post_comments(post_id,owner_id,body) values($1,$2,$3)',[post,b,'不能向已删除帖子评论']),/row-level security/);
+  await asUser(admin);
+  assert.equal((await db.query("update public.profiles set bio='管理员也不能编辑他人的简介' where id=$1 returning id",[a])).rows.length,0);
+  assert.equal((await db.query("update public.post_comments set body='管理员不能伪造其他人的评论' where id=$1 returning id",[comment.id])).rows.length,0);
+  const internship='11111111-1111-4111-8111-111111111102';
+  await assert.rejects(()=>db.query('update public.resources set application_enabled=true where id=$1',[internship]),/check constraint/);
+ }finally{await db.close();}
+});

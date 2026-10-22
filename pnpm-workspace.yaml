@@ -1,0 +1,2 @@
+minimumReleaseAgeExclude:
+  - '@office-kit/pptx@0.24.1'

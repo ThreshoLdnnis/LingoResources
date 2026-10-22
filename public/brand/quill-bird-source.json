@@ -1,0 +1,6 @@
+{
+  "asset": "quill-bird-logo.png",
+  "source": "User-supplied black-and-white quill bird reference",
+  "processing": "Built-in imagegen, transparent-background extraction",
+  "sha256": "ee33a69d847f8c84b6ae424a123b4e4dcb8efe5124ba1131985d51adc337f39c"
+}
