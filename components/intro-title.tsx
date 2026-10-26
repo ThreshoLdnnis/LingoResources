@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 
 import { useEffect, useRef, type ReactNode } from "react";
 
@@ -128,15 +130,15 @@ export function ParticleHeading({as:Heading="h1",id,effect="standard",children}:
     function visibility(){if(document.hidden)reset();else if(visible)introduce();}
     const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(visible)introduce();else reset();},{threshold:.15});
     const resize=new ResizeObserver(build),theme=new MutationObserver(build);
-    intersection.observe(title);resize.observe(title);theme.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+    intersection.observe(title);resize.observe(title);theme.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme","lang"]});
     title.addEventListener("pointermove",move,{passive:true});title.addEventListener("pointerleave",leave);title.addEventListener("pointerdown",tap,{passive:true});
     motion.addEventListener("change",build);document.addEventListener("visibilitychange",visibility);
     void document.fonts.ready.then(()=>{if(!disposed){fontsReady=true;build();}});
     return()=>{disposed=true;reset();intersection.disconnect();resize.disconnect();theme.disconnect();title.removeEventListener("pointermove",move);title.removeEventListener("pointerleave",leave);title.removeEventListener("pointerdown",tap);motion.removeEventListener("change",build);document.removeEventListener("visibilitychange",visibility);};
   },[effect]);
-  return <Heading id={id} className="particle-heading" ref={titleRef}>{children}<svg viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M50 3C54 33 67 46 97 50C67 54 54 67 50 97C46 67 33 54 3 50C33 46 46 33 50 3Z" fill="currentColor"/></svg><canvas className="intro-title-particles" ref={canvasRef} aria-hidden="true"/></Heading>;
+  return <I18nRegion><Heading id={id} className="particle-heading" ref={titleRef}>{children}<svg viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M50 3C54 33 67 46 97 50C67 54 54 67 50 97C46 67 33 54 3 50C33 46 46 33 50 3Z" fill="currentColor"/></svg><canvas className="intro-title-particles" ref={canvasRef} aria-hidden="true"/></Heading></I18nRegion>;
 }
 
 export function IntroTitle() {
-  return <ParticleHeading id="intro-title" effect="vivid"><span className="intro-title-ink intro-title-base">下一段奇遇，<br/></span><span className="intro-title-ink intro-title-accent">由此启程!</span></ParticleHeading>;
+  return <I18nRegion><ParticleHeading id="intro-title" effect="vivid"><span className="intro-title-ink intro-title-base">下一段奇遇，<br/></span><span className="intro-title-ink intro-title-accent">由此启程!</span></ParticleHeading></I18nRegion>;
 }

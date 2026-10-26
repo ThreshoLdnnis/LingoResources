@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 
 import { useEffect, useRef } from "react";
 import { createOrbitScene } from "@/lib/orbit-scene";
@@ -20,9 +22,9 @@ export function ExplorationOrbit(){
     target.addEventListener("webglcontextlost",lost);document.addEventListener("visibilitychange",update);motion.addEventListener("change",update);scene.draw(0);
     return()=>{disposed=true;cancelAnimationFrame(frame);observer.disconnect();resize.disconnect();target.removeEventListener("webglcontextlost",lost);document.removeEventListener("visibilitychange",update);motion.removeEventListener("change",update);scene.dispose();};
   },[]);
-  return <div className="intro-manifesto-art intro-orbit-model" ref={host} data-renderer="fallback" role="img" aria-label="探索轨道：宇宙紫与宇宙蓝立体双环交错转动，星点沿轨道运行，中央金黄色四角星柔和闪烁，下方是蓝紫色底座">
+  return <I18nRegion><div className="intro-manifesto-art intro-orbit-model" ref={host} data-renderer="fallback" role="img" aria-label="探索轨道：宇宙紫与宇宙蓝立体双环交错转动，星点沿轨道运行，中央金黄色四角星柔和闪烁，下方是蓝紫色底座">
     <div className="exploration-orbit-shadow"/>
     <canvas ref={canvas} className="exploration-orbit-canvas" aria-hidden="true"/>
     <div className="exploration-orbit-fallback" aria-hidden="true"><i/><i/><b/><span/></div>
-  </div>;
+  </div></I18nRegion>;
 }

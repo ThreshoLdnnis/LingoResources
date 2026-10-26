@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
@@ -53,7 +55,7 @@ export function HeroRipple({ children }: { children: ReactNode }) {
     };
   }, [reduce]);
 
-  return <motion.div
+  return <I18nRegion><motion.div
     ref={card}
     className={"hero-card hero-water-card" + (ripple ? " is-rippling" : "")}
     initial={false}
@@ -76,5 +78,5 @@ export function HeroRipple({ children }: { children: ReactNode }) {
       left: ripple.x, top: ripple.y, "--ripple-size": ripple.size + "px",
     } as CSSProperties}><i /><i /><i /></div>}
     <div className="hero-wave-content" style={ripple ? { filter: `url(#${filterId})` } : undefined}>{children}</div>
-  </motion.div>;
+  </motion.div></I18nRegion>;
 }

@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion,LanguageToggle} from "./i18n";
+
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -16,40 +18,40 @@ import { ExplorationOrbit } from "./exploration-orbit";
 import { IntroDeck, introDoors as doors } from "./intro-deck";
 
 function Spark({className=""}:{className?:string}) {
-  return <svg className={className} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M50 3C54 33 67 46 97 50C67 54 54 67 50 97C46 67 33 54 3 50C33 46 46 33 50 3Z" fill="currentColor"/></svg>;
+  return <I18nRegion><svg className={className} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M50 3C54 33 67 46 97 50C67 54 54 67 50 97C46 67 33 54 3 50C33 46 46 33 50 3Z" fill="currentColor"/></svg></I18nRegion>;
 }
 
 function DiscoveryScene() {
-  return <div className="intro-scene intro-discovery" role="img" aria-label="机会发现功能示意：搜索方向、筛选类型、收藏感兴趣的机会">
+  return <I18nRegion><div className="intro-scene intro-discovery" role="img" aria-label="机会发现功能示意：搜索方向、筛选类型、收藏感兴趣的机会">
     <div className="intro-browser"><div className="intro-browser-bar"><span><i/><i/><i/></span><small>lingozm.cn / discover</small><Search size={13}/></div>
       <div className="intro-mini-search"><Search size={17}/><span>下一次，我想试试什么？</span><span className="intro-key">↵</span></div>
       <div className="intro-mini-filters"><b>全部机会</b><span>赛事活动</span><span>工作实习</span></div>
       <div className="intro-opportunity"><span className="intro-scene-icon"><Trophy size={24}/></span><div><small>赛事活动 · 示例</small><strong>把校园里的好点子，做成作品</strong><p>创新创业　跨学科　组队</p></div><Bookmark size={18}/></div>
       <div className="intro-opportunity is-secondary"><span className="intro-scene-icon"><Code2 size={23}/></span><div><small>项目实践 · 示例</small><strong>你的第一个 AI 小项目</strong><p>从一个真实的小问题开始</p></div><ArrowUpRight size={18}/></div>
     </div><div className="intro-float-note"><Bookmark size={17}/><span>感兴趣？先放进收藏夹。</span><Check size={15}/></div><Spark className="intro-scene-spark"/>
-  </div>;
+  </div></I18nRegion>;
 }
 
 function LearningScene() {
-  return <div className="intro-scene intro-learning" role="img" aria-label="学习成长功能示意：学习课程、阅读课件、下载资料、实践输出">
+  return <I18nRegion><div className="intro-scene intro-learning" role="img" aria-label="学习成长功能示意：学习课程、阅读课件、下载资料、实践输出">
     <div className="intro-lesson-window"><div className="intro-lesson-top"><span><BookOpen size={17}/>学习空间</span><small>一步一步，也很了不起</small></div><div className="intro-lesson-art"><span>01</span><Play size={28}/><Spark/></div><div className="intro-lesson-body"><small>从好奇开始 / 示例课程</small><strong>把想法，变成第一个作品</strong><div className="intro-materials"><span><FileText size={15}/>讲义.pdf</span><span><FolderOpen size={15}/>项目代码.zip</span></div></div></div>
     <div className="intro-skill-card"><span className="intro-skill-icon"><Sparkles size={22}/></span><div><small>今天的新技能</small><strong>少一点“以后再学”</strong></div></div>
     <div className="intro-lesson-check"><Check size={17}/>学一点，用起来。</div>
-  </div>;
+  </div></I18nRegion>;
 }
 
 function CommunityScene() {
-  return <div className="intro-scene intro-community" role="img" aria-label="社区组队功能示意：转发赛事、发布招募、评论交流，认识不同技能的伙伴">
+  return <I18nRegion><div className="intro-scene intro-community" role="img" aria-label="社区组队功能示意：转发赛事、发布招募、评论交流，认识不同技能的伙伴">
     <div className="intro-team-post"><div className="intro-post-author"><span className="intro-avatar">Hi</span><div><strong>一个正在行动的同学</strong><small>组队帖示意</small></div><span>···</span></div><h3>这个比赛，一起试试？</h3><p>想把一个关于校园生活的点子做出来。<br/>寻找设计、开发，和同样好奇的你。</p><div className="intro-shared-event"><Trophy size={24}/><div><small>转发的赛事</small><strong>从同一个机会，开始认识</strong></div><ArrowUpRight size={17}/></div><div className="intro-post-meta"><span><MessageCircle size={15}/>把想法聊清楚</span><span>再一起出发 ↗</span></div></div>
     <div className="intro-reply intro-reply-one"><span>设计</span>我来画原型！<Sparkles size={15}/></div><div className="intro-reply intro-reply-two"><span>开发</span>一起把它做出来。<Code2 size={17}/></div>
-  </div>;
+  </div></I18nRegion>;
 }
 
 function ProfileScene() {
-  return <div className="intro-scene intro-profile" role="img" aria-label="个人空间功能示意：自定义个人介绍、技能标签、项目作品与获奖记录">
+  return <I18nRegion><div className="intro-scene intro-profile" role="img" aria-label="个人空间功能示意：自定义个人介绍、技能标签、项目作品与获奖记录">
     <div className="intro-profile-card"><div className="intro-profile-cover"><span className="intro-profile-monogram">我</span><Spark/></div><div className="intro-profile-info"><small>YOUR SPACE, YOUR STORY</small><strong>你好，这是正在探索的我。</strong><p>喜欢的事，做过的事，还有想尝试的事。</p><div><span>好奇心</span><span>行动派</span><span>持续更新中</span></div></div></div>
     <div className="intro-project-note"><Layers size={20}/><small>我的作品</small><strong>从 0 到 1 的一次尝试</strong><ArrowUpRight size={18}/></div><div className="intro-award-note"><Trophy size={21}/><small>CERTIFICATE</small><strong>值得纪念的小成就</strong><span>每一步，都算数。</span></div>
-  </div>;
+  </div></I18nRegion>;
 }
 
 const faqs = [
@@ -69,11 +71,11 @@ export default function Landing() {
   function toggleTheme(){const value=!dark;setDark(value);document.documentElement.dataset.theme=value?"dark":"light";localStorage.setItem("zongmen-theme",value?"dark":"light");}
   function openAuth(next:"login"|"signup"){setMode(next);setMenu(false);setAuth(true);}
   const join=s.user?<MemberLink className="intro-button intro-button-dark" href="/explore/">回到我的平台<ArrowUpRight size={18}/></MemberLink>:<button className="intro-button intro-button-dark" onClick={()=>openAuth("signup")}>有内测码？加入翎语<ArrowUpRight size={18}/></button>;
-  return <div className="intro-page" ref={root}>
+  return <I18nRegion><div className="intro-page" ref={root}>
     <a href="#intro-main" className="skip-link">跳到正文</a>
     <header className="intro-header"><div className="intro-nav-wrap"><Link className="intro-brand" href="/" aria-label="翎语 Lingo 官网首页"><Logo/><span><b>{brand.englishName}</b><small>{brand.name}</small></span></Link>
       <nav aria-label="官网导航" className={menu?"is-open":""}><a href="#why-lingo" onClick={()=>setMenu(false)}>认识翎语</a><a href="#possibilities" onClick={()=>setMenu(false)}>发现可能</a><a href="#get-started" onClick={()=>setMenu(false)}>如何开始</a></nav>
-      <div className="intro-header-actions"><button className="intro-theme" onClick={toggleTheme} aria-label={dark?"切换浅色模式":"切换深色模式"}>{dark?<Sun size={19}/>:<Moon size={19}/>}</button>{s.user?<MemberLink className="intro-login" href="/explore/">进入平台<ArrowUpRight size={16}/></MemberLink>:<><button className="intro-login" onClick={()=>openAuth("login")}>登录<ArrowUpRight size={16}/></button><button className="intro-header-join" onClick={()=>openAuth("signup")}>受邀注册</button></>}<button className="intro-menu" aria-label="切换官网导航" aria-expanded={menu} onClick={()=>setMenu(!menu)}>{menu?<X size={21}/>:<Menu size={21}/>}</button></div>
+      <div className="intro-header-actions"><LanguageToggle/><button className="intro-theme" onClick={toggleTheme} aria-label={dark?"切换浅色模式":"切换深色模式"}>{dark?<Sun size={19}/>:<Moon size={19}/>}</button>{s.user?<MemberLink className="intro-login" href="/explore/">进入平台<ArrowUpRight size={16}/></MemberLink>:<><button className="intro-login" onClick={()=>openAuth("login")}>登录<ArrowUpRight size={16}/></button><button className="intro-header-join" onClick={()=>openAuth("signup")}>受邀注册</button></>}<button className="intro-menu" aria-label="切换官网导航" aria-expanded={menu} onClick={()=>setMenu(!menu)}>{menu?<X size={21}/>:<Menu size={21}/>}</button></div>
     </div></header>
     <main id="intro-main">
       <section className="intro-hero intro-container" aria-labelledby="intro-title">
@@ -110,5 +112,5 @@ export default function Landing() {
     </main>
     <footer className="intro-footer intro-container"><div><Link className="intro-brand" href="/" aria-label="翎语 Lingo 官网首页"><Logo/><span><b>{brand.englishName}</b><small>{brand.name}</small></span></Link><p>让优秀的资源，不再只属于少数知道的人。</p></div><div className="intro-footer-links"><a href="#why-lingo">认识翎语</a><MemberLink href="/explore/">进入平台</MemberLink><MemberLink href="/community/">社区组队</MemberLink><MemberLink href="/admin/">运营后台</MemberLink><button onClick={()=>openAuth("login")}>{s.user?"账户管理":"登录 / 注册"}</button></div><span className="intro-copyright footer-credits"><span>© {new Date().getFullYear()} {brand.title} · {brand.descriptor}</span><span className="footer-founder">{brand.founder}</span></span></footer>
     <AuthDialog open={auth} onOpenChange={setAuth} initialMode={mode} onAuthenticated={()=>router.push("/explore/")}/><div className={"toast "+(s.message?"show":"")} role="status"><Check size={17}/>{s.message}</div>
-  </div>;
+  </div></I18nRegion>;
 }

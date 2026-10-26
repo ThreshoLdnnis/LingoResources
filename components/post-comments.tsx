@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 import { useEffect, useState } from "react";
 import { LoaderCircle, MessageCircle, Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { useGrowth } from "@/lib/store";
@@ -24,7 +26,7 @@ export function PostComments({postId,onSignIn}:{postId:string;onSignIn:()=>void}
  const pages=Math.max(1,Math.ceil(total/20));
  const refreshComments=()=>setRefresh(x=>x+1);
  const own=(comment:PostComment)=>ownsContent(comment.owner_id,s.user?.id,s.connected);
- return <section className="post-comments" aria-label="帖子评论">
+ return <I18nRegion><section className="post-comments" aria-label="帖子评论">
   <div className="comments-heading"><h3><MessageCircle size={18}/>评论 <span>{total}</span></h3><button className="icon-button" aria-label="刷新评论" disabled={loading} onClick={refreshComments}><RefreshCw size={16}/></button></div>
   {error&&<p className="form-error" role="alert">{error}</p>}
   {loading?<div className="comments-loading" role="status"><LoaderCircle size={18} className="spin"/>正在读取评论…</div>:items.length?<div className="comment-list">{items.map(comment=><article className="comment-card" key={comment.id}>
@@ -33,7 +35,7 @@ export function PostComments({postId,onSignIn}:{postId:string;onSignIn:()=>void}
    </div>
    {editing===comment.id&&own(comment)?<form className="comment-edit" onSubmit={async e=>{e.preventDefault();setPending(true);setError("");try{await s.editComment(comment,editBody);setEditing(null);refreshComments();}catch(e){setError((e as Error).message);}finally{setPending(false);}}}>
     <textarea aria-label="修改评论内容" required maxLength={1500} value={editBody} onChange={e=>setEditBody(e.target.value)}/><div className="comment-form-actions"><button className="button secondary" type="button" disabled={pending} onClick={()=>setEditing(null)}>取消</button><button className="button soft" disabled={pending||!editBody.trim()}>{pending?"保存中…":"保存修改"}</button></div>
-   </form>:<p className="comment-body">{comment.body}</p>}
+   </form>:<p className="comment-body" translate="no">{comment.body}</p>}
   </article>)}</div>:!error&&<p className="comments-empty">还没有评论。留下一句话，认识一起出发的伙伴。</p>}
   {pages>1&&<nav className="comment-pagination" aria-label="评论翻页"><button className="button secondary" disabled={loading||page===1} onClick={()=>setPage(x=>x-1)}>上一页</button><span>第 {page} / {pages} 页 · 最新评论在前</span><button className="button secondary" disabled={loading||page===pages} onClick={()=>setPage(x=>x+1)}>下一页</button></nav>}
   {s.connected&&!s.user?<div className="comment-sign-in"><p>登录后，就可以参与讨论和组队。</p><button className="button soft" onClick={onSignIn}>登录后评论</button></div>:<form className="comment-compose" onSubmit={async e=>{
@@ -42,5 +44,5 @@ export function PostComments({postId,onSignIn}:{postId:string;onSignIn:()=>void}
   <Modal open={!!deleting} onOpenChange={()=>{if(!pending)setDeleting(null);}} title="删除这条评论？"><p className="muted">删除后，这条评论不再向其他伙伴展示。</p>{error&&<p className="form-error" role="alert">{error}</p>}<div className="dialog-actions"><button className="button secondary" disabled={pending} onClick={()=>setDeleting(null)}>保留评论</button><button className="button danger" disabled={pending} onClick={async()=>{
    if(!deleting)return;setPending(true);setError("");try{await s.deleteComment(deleting);setDeleting(null);if(editing===deleting.id)setEditing(null);refreshComments();}catch(e){setError((e as Error).message);}finally{setPending(false);}
   }}>{pending?"删除中…":"确认删除"}</button></div></Modal>
- </section>;
+ </section></I18nRegion>;
 }

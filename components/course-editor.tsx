@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 import {useEffect,useRef,useState} from 'react';
 import * as AlertDialog from '@radix-ui/react-alert-dialog';
 import * as Tabs from '@radix-ui/react-tabs';
@@ -52,7 +54,7 @@ export function CourseEditor({resource,onClose}:{resource:Resource|null;onClose:
       setPending(true);await s.saveResource(next);setDirty(false);onClose();
     } catch(reason){setError((reason as Error).message)} finally{setPending(false)}
   }
-  return <>
+  return <I18nRegion><>
     <Modal open onOpenChange={close} title={resource?'编辑课程':'新增课程'} wide>
       <form className="course-publisher form-stack" onSubmit={event=>{event.preventDefault();void save('draft')}}>
         <div className="course-editor-summary"><span className={'status '+course.status}>{course.status==='published'?'已发布':'草稿'}</span><span><BookOpen size={15}/>{stats.lessons} 节课 · {stats.minutes} 分钟</span><span><FileText size={15}/>{stats.files} 份课件</span>{dirty&&<small>有未保存的修改</small>}</div>
@@ -91,7 +93,7 @@ export function CourseEditor({resource,onClose}:{resource:Resource|null;onClose:
           </Tabs.Content>
           <Tabs.Content value="preview" className="course-editor-panel">
             <div className={'course-publish-check '+(!issues.length?'ready':'')}><div><Check size={20}/><strong>{issues.length?'发布前还需要完善':'课程已准备好，可以发布'}</strong></div>{issues.length?<ul>{issues.map(issue=><li key={issue}>{issue}</li>)}</ul>:<p>课程资料、课时内容已齐备。请再检查课件的阅读与下载效果。</p>}</div>
-            <div className={'course-preview-cover '+courseCoverClass(course.tone)}><BookOpen size={32}/><div><small>{stats.lessons} 节课 · {stats.minutes} 分钟</small><h3>{course.title||'你的课程名称'}</h3><p>{course.subtitle||'一句话介绍将显示在这里'}</p><CourseAttribution name={course.org}/></div></div>
+            <div className={'course-preview-cover '+courseCoverClass(course.tone)}><BookOpen size={32}/><div><small>{stats.lessons} 节课 · {stats.minutes} 分钟</small><h3 translate="no">{course.title||'你的课程名称'}</h3><p translate="no">{course.subtitle||'一句话介绍将显示在这里'}</p><CourseAttribution name={course.org}/></div></div>
             <p className="course-preview-note">以下为学生阅读预览，不会改变学习进度；尚未发布的内容仅管理员可见。</p>
             <CourseLessonView course={course} preview/>
           </Tabs.Content>
@@ -102,5 +104,5 @@ export function CourseEditor({resource,onClose}:{resource:Resource|null;onClose:
     </Modal>
     <AlertDialog.Root open={discard} onOpenChange={setDiscard}><AlertDialog.Portal><AlertDialog.Overlay className="modal-overlay"/><AlertDialog.Content className="modal-content"><AlertDialog.Title>放弃本次课程修改？</AlertDialog.Title><AlertDialog.Description className="muted">未保存的资料、课时顺序及课件关联不会发布。你也可以返回编辑器保存草稿。</AlertDialog.Description><div className="dialog-actions"><AlertDialog.Cancel className="button secondary">继续编辑</AlertDialog.Cancel><button type="button" className="button danger" onClick={()=>{setDirty(false);onClose()}}>放弃修改</button></div></AlertDialog.Content></AlertDialog.Portal></AlertDialog.Root>
     <AlertDialog.Root open={!!removeLesson} onOpenChange={()=>setRemoveLesson(null)}><AlertDialog.Portal><AlertDialog.Overlay className="modal-overlay"/><AlertDialog.Content className="modal-content"><AlertDialog.Title>从课程中移除这一节？</AlertDialog.Title><AlertDialog.Description className="muted">课时和它的课件入口会在保存课程后移除；其他课时保持原有顺序。</AlertDialog.Description><div className="dialog-actions"><AlertDialog.Cancel className="button secondary">保留课时</AlertDialog.Cancel><button type="button" className="button danger" onClick={()=>{patch({lessons:lessons.filter(item=>item.id!==removeLesson)});setRemoveLesson(null)}}>移除课时</button></div></AlertDialog.Content></AlertDialog.Portal></AlertDialog.Root>
-  </>;
+  </></I18nRegion>;
 }

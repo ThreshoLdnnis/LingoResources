@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 
 import { useEffect, useRef, type CSSProperties } from "react";
 
@@ -24,11 +26,11 @@ export function CosmicBackdrop(){
     observer.observe(element);document.addEventListener("visibilitychange",update);
     return()=>{observer.disconnect();document.removeEventListener("visibilitychange",update);};
   },[]);
-  return <div className="intro-cosmos" ref={ref} aria-hidden="true" data-active="false">
+  return <I18nRegion><div className="intro-cosmos" ref={ref} aria-hidden="true" data-active="false">
     <div className="intro-cosmic-glow"/>
     <div className="intro-cosmic-beam"/>
     <div className="intro-cosmic-horizon"/>
     <div className="intro-starfield">{stars.map((star,i)=><i className={"intro-star"+(star.sparkle?" intro-star-sparkle":"")} key={i} style={{left:star.left,top:star.top,width:star.sparkle?star.sparkleSize:star.size,height:star.sparkle?star.sparkleSize:star.size,"--star-duration":star.duration,"--star-delay":star.delay} as CSSProperties}/>)}</div>
     <span className="intro-cosmic-caption">GO BEYOND<br/>WHAT YOU KNOW.</span>
-  </div>;
+  </div></I18nRegion>;
 }

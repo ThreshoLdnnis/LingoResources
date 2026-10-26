@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Download, FileArchive, FileText, LoaderCircle, Maximize, Minimize, Minus, Plus, RefreshCw } from "lucide-react";
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
@@ -26,12 +28,12 @@ function HtmlReader({url,name}:{url:string;name:string}) {
     try{setNotice('');if(document.fullscreenElement===reader.current)await document.exitFullscreen();else await reader.current?.requestFullscreen()}
     catch{setNotice('当前浏览器未开启全屏阅读，可继续在下方阅读课件。')}
   }
-  return <div className="html-course-reader" ref={reader}>
+  return <I18nRegion><div className="html-course-reader" ref={reader}>
     <div className="pdf-toolbar"><small>HTML 互动课件 · 可点击、答题与展开阅读</small><button type="button" className="button secondary" onClick={()=>void toggleFullscreen()}>{expanded?<Minimize size={15}/>:<Maximize size={15}/>} {expanded?'退出全屏':'全屏阅读'}</button></div>
     {notice&&<p className="field-help" role="status">{notice}</p>}
     {error?<p className="material-error" role="alert">{error}</p>:source?<iframe className="html-course-frame" title={'HTML 互动课件：'+name} sandbox={HTML_COURSE_SANDBOX} referrerPolicy="no-referrer" srcDoc={source}/>:<p className="material-loading" role="status"><LoaderCircle size={18} className="spin"/>正在打开互动课件…</p>}
     <p className="html-course-note">支持单文件 HTML 的内嵌样式和交互；外部资源不会加载。切换章节请使用课程目录。</p>
-  </div>;
+  </div></I18nRegion>;
 }
 
 function PdfReader({url,name}:{url:string;name:string}) {
@@ -71,7 +73,7 @@ function PdfReader({url,name}:{url:string;name:string}) {
     }).catch(e=>{if(!cancelled&&e?.name!=='RenderingCancelledException'){setError(e?.message||'本页暂时无法显示');setRendering(false)}});
     return()=>{cancelled=true;task?.cancel()};
   },[doc,page,zoom,width]);
-  return <div className="pdf-reader">
+  return <I18nRegion><div className="pdf-reader">
     <div className="pdf-toolbar">
       <div><button type="button" className="icon-button" aria-label="课件上一页" disabled={page<=1||!doc} onClick={()=>setPage(p=>p-1)}><ChevronLeft size={18}/></button><span role="status">{doc?`${page} / ${doc.numPages}`:'正在读取…'}</span><button type="button" className="icon-button" aria-label="课件下一页" disabled={!doc||page>=doc.numPages} onClick={()=>setPage(p=>p+1)}><ChevronRight size={18}/></button></div>
       <div><button type="button" className="icon-button" aria-label="缩小课件" disabled={zoom<=.75} onClick={()=>setZoom(z=>Math.max(.75,z-.25))}><Minus size={16}/></button><span>{Math.round(zoom*100)}%</span><button type="button" className="icon-button" aria-label="放大课件" disabled={zoom>=2} onClick={()=>setZoom(z=>Math.min(2,z+.25))}><Plus size={16}/></button></div>
@@ -82,7 +84,7 @@ function PdfReader({url,name}:{url:string;name:string}) {
       <canvas ref={canvas} aria-label={name+"，第 "+page+" 页"} role="img" style={{visibility:doc&&!error?'visible':'hidden'}}/>
     </div>
     {text&&<details className="pdf-text"><summary>查看本页文字</summary><p>{text}</p></details>}
-  </div>;
+  </div></I18nRegion>;
 }
 
 function PptxReader({url,name}:{url:string;name:string}) {
@@ -108,12 +110,12 @@ function PptxReader({url,name}:{url:string;name:string}) {
     }catch(e){setError(e instanceof Error?e.message:'本页暂时无法显示')}
     return()=>{if(source)URL.revokeObjectURL(source)};
   },[deck,page]);
-  return <div className="pptx-reader">
+  return <I18nRegion><div className="pptx-reader">
     <div className="pdf-toolbar"><div><button type="button" className="icon-button" aria-label="幻灯片上一页" disabled={!deck||page===0} onClick={()=>setPage(x=>x-1)}><ChevronLeft size={18}/></button><span role="status">{deck?`${page+1} / ${deck.slides.length}`:'正在读取…'}</span><button type="button" className="icon-button" aria-label="幻灯片下一页" disabled={!deck||page>=deck.slides.length-1} onClick={()=>setPage(x=>x+1)}><ChevronRight size={18}/></button></div><small>PPTX 在线阅读</small></div>
     {error?<p className="material-error" role="alert">预览失败：{error}。可下载原文件，或上传 PDF 版本。</p>:image?<div className="pptx-slide"><img src={image} alt={name+"，第 "+(page+1)+" 页"}/></div>:<p className="material-loading" role="status"><LoaderCircle size={18} className="spin"/>正在显示幻灯片…</p>}
     {text&&<details className="pdf-text"><summary>查看本页文字</summary><p>{text}</p></details>}
     <p className="pptx-preview-note">静态阅读预览；复杂动画、字体和部分特殊元素可能与原文件略有差异。</p>
-  </div>;
+  </div></I18nRegion>;
 }
 
 export function CourseMaterials({files}:{files:CourseFile[]}) {
@@ -127,9 +129,9 @@ export function CourseMaterials({files}:{files:CourseFile[]}) {
   },[file?.path,retry]);
   if(!file)return null;
   const url=loaded.path===file.path?loaded.url:"";
-  return <section className="course-materials" aria-label="课程课件">
+  return <I18nRegion><section className="course-materials" aria-label="课程课件">
     <div className="material-heading"><div>{archive?<FileArchive size={18}/>:<FileText size={18}/>}<strong>{archive?'代码 / 资料包':'本节课件'}</strong><small>{formatFileSize(file.size)}</small></div>{url&&<a className="button secondary" href={url} download={file.name}><Download size={15}/>{archive?'下载 ZIP 压缩包':'下载课件'}</a>}</div>
     {files.length>1?<select aria-label="选择课件" value={file.path} onChange={e=>setSelected(e.target.value)}>{files.map(f=><option key={f.path} value={f.path}>{f.name}</option>)}</select>:<p className="material-name">{file.name}</p>}
     {error?<div className="material-error" role="alert"><p>附件暂时无法读取：{error}</p><button className="button secondary" type="button" onClick={()=>setRetry(x=>x+1)}><RefreshCw size={15}/>重新读取</button></div>:!url?<p className="material-loading" role="status"><LoaderCircle size={18} className="spin"/>正在读取附件…</p>:archive?<div className="material-office material-archive"><FileArchive size={40}/><h4>{file.name}</h4><p>课程配套的代码或资料已打包为 ZIP。下载后在电脑上解压，即可查看完整文件。</p><a className="button primary" href={url} download={file.name}><Download size={16}/>下载原始 ZIP</a></div>:file.mime==='text/html'?<HtmlReader key={url} url={url} name={file.name}/>:file.mime==='application/pdf'?<PdfReader key={url} url={url} name={file.name}/>:file.mime==='application/vnd.openxmlformats-officedocument.presentationml.presentation'?<PptxReader key={url} url={url} name={file.name}/>:file.mime.startsWith('image/')?<img className="material-image" src={url} alt={file.name}/>:<div className="material-office"><FileText size={36}/><h4>{file.name}</h4><p>旧版 .ppt 请另存为 .pptx 或 PDF 后上传，即可在线阅读；Word 课件可下载阅读。</p><a className="button primary" href={url} download={file.name}><Download size={16}/>下载原课件</a></div>}
-  </section>;
+  </section></I18nRegion>;
 }

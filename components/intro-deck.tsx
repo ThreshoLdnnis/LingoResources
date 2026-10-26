@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 
 import { MemberLink } from "./member-access";
 import { useMemo, useRef } from "react";
@@ -28,7 +30,7 @@ function DeckCard({index,slot,onSelect}:{index:number;slot:number;onSelect:(inde
     if(reduce)return pose;
     return {...pose,y:[null,front?"-7%":"16%",pose.y],z:[null,front?180:5,pose.z],rotateY:[null,front?-24:slot===1?32:-32,pose.rotateY]};
   },[slot,reduce,front]);
-  return <motion.article className={"intro-swap-card intro-tone-"+item.tone} data-slot={slot} data-card={index}
+  return <I18nRegion><motion.article className={"intro-swap-card intro-tone-"+item.tone} data-slot={slot} data-card={index}
     initial={false} animate={destination} transition={{duration:reduce?0:.88,ease:[.22,.75,.2,1],times:[0,.45,1]}}
     aria-label={item.label+"卡片"} aria-hidden={slot===3}>
     <div className="intro-card-face" aria-hidden={!front}>
@@ -39,12 +41,12 @@ function DeckCard({index,slot,onSelect}:{index:number;slot:number;onSelect:(inde
     </div>
     <div className="intro-card-peek" aria-hidden="true"><span>{item.word}</span><item.icon/><b>{item.label}</b><small>{item.note}</small></div>
     <button ref={select} className="intro-deck-select" aria-label={"将“"+item.label+"”卡片移到前排"} tabIndex={front||slot===3?-1:0} aria-hidden={front||slot===3} onClick={()=>{onSelect(index);requestAnimationFrame(()=>link.current?.focus({preventScroll:true}));}}/>
-  </motion.article>;
+  </motion.article></I18nRegion>;
 }
 
 export function IntroDeck({order,onSelect}:{order:number[];onSelect:(index:number)=>void}) {
-  return <div className="intro-card-stage" role="group" aria-label="点击后排卡片，切换到前排">
+  return <I18nRegion><div className="intro-card-stage" role="group" aria-label="点击后排卡片，切换到前排">
     {introDoors.map((item,index)=><DeckCard key={item.label} index={index} slot={order.indexOf(index)} onSelect={onSelect}/>)}
     <p className="intro-deck-status" role="status" aria-live="polite">当前前排：{introDoors[order[0]].label}</p>
-  </div>;
+  </div></I18nRegion>;
 }

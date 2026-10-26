@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion,LanguageToggle} from "./i18n";
+
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -19,8 +21,8 @@ export function MemberBoundary({ children }: { children: ReactNode }) {
   }, [protectedRoute, pathname, s.user?.id, s.loading]);
   if (!protectedRoute || s.user) return children;
   function open(next: "login" | "signup") { setMode(next); setAuth(true); }
-  return <div className="member-access-page">
-    <header><Link href="/" className="member-access-brand"><img src="/brand/quill-bird-logo.png" alt="" width={48} height={48}/><span>Lingo <small>翎语</small></span></Link><Link href="/" className="text-link"><ArrowLeft size={15}/>返回平台介绍</Link></header>
+  return <I18nRegion><div className="member-access-page">
+    <header><Link href="/" className="member-access-brand"><img src="/brand/quill-bird-logo.png" alt="" width={48} height={48}/><span>Lingo <small>翎语</small></span></Link><LanguageToggle/><Link href="/" className="text-link"><ArrowLeft size={15}/>返回平台介绍</Link></header>
     <main className="member-access-card">
       {s.loading ? <><LoaderCircle size={30} className="spin"/><h1>正在确认登录状态…</h1><p>稍等一下，你的下一段奇遇即将开启。</p></> : <>
         <span className="member-access-icon"><LockKeyhole size={26}/></span><span className="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
@@ -30,13 +32,13 @@ export function MemberBoundary({ children }: { children: ReactNode }) {
       </>}
     </main>
     <AuthDialog open={auth} onOpenChange={setAuth} initialMode={mode}/>
-  </div>;
+  </div></I18nRegion>;
 }
 
 type MemberLinkProps = Omit<ComponentProps<typeof Link>, "href" | "onNavigate"> & { href: string };
 export const MemberLink = forwardRef<HTMLAnchorElement, MemberLinkProps>(function MemberLink({ href, children, ...props }, ref) {
   const s = useGrowth(), router = useRouter(), [auth, setAuth] = useState(false);
-  return <><Link {...props} ref={ref} href={href} prefetch={s.user ? props.prefetch : false} onNavigate={event => {
+  return <I18nRegion><><Link {...props} ref={ref} href={href} prefetch={s.user ? props.prefetch : false} onNavigate={event => {
     if (!s.user) { event.preventDefault(); setAuth(true); }
-  }}>{children}</Link><AuthDialog open={auth} onOpenChange={setAuth} onAuthenticated={() => router.push(href)}/></>;
+  }}>{children}</Link><AuthDialog open={auth} onOpenChange={setAuth} onAuthenticated={() => router.push(href)}/></></I18nRegion>;
 });

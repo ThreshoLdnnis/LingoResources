@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Sparkles, SlidersHorizontal, RotateCcw, Compass, ArrowUpRight, BookOpen, Wrench, Flag } from "lucide-react";
@@ -14,7 +16,7 @@ const examples=["零基础，想学 AI 做作品集，优先线上资源","想�
 const initialDraft=():MatchPreferences=>({text:"",goal:"auto",tags:[],location:"auto",level:"auto",horizon:"auto",price:"auto",includeOnline:true,personalize:true});
 
 function CityOptions({auto=false}:{auto?:boolean}) {
-  return <>{auto&&<option value="auto">从需求中自动识别</option>}<option>全部</option><option>线上</option><option>远程</option><optgroup label="国内城市">{domesticCities.map(city=><option key={city}>{city}</option>)}</optgroup><optgroup label="海外城市">{internationalCities.map(city=><option key={city}>{city}</option>)}</optgroup></>;
+  return <I18nRegion><>{auto&&<option value="auto">从需求中自动识别</option>}<option>全部</option><option>线上</option><option>远程</option><optgroup label="国内城市">{domesticCities.map(city=><option key={city}>{city}</option>)}</optgroup><optgroup label="海外城市">{internationalCities.map(city=><option key={city}>{city}</option>)}</optgroup></></I18nRegion>;
 }
 
 export default function Discover() {
@@ -67,12 +69,12 @@ export default function Discover() {
   const effectiveCity=draft.location==="auto"?intent.location||"全部":draft.location;
   const total=result?ranked.length:shown.length;
   const hasTarget=result&&["internship","competition","project"].includes(result.preferences.goal)&&result.rows.some(r=>r.resource.kind===result.preferences.goal);
-  return <Platform page="discover">
+  return <I18nRegion><Platform page="discover">
     <Reveal className="page-heading"><div><span className="eyebrow">EXPLORE YOUR POSSIBILITIES</span><h1>机会藏在这里，下一步由你决定。</h1><p>赛事、实习、工具与项目，把信息差变成你的成长空间。</p></div><button className="button soft" onClick={()=>setMatch(true)}><Sparkles size={17}/>智能发现</button></Reveal>
     {result&&<Reveal className="smart-result-panel">
       <div className="smart-result-heading"><div className="smart-result-icon"><Sparkles size={23}/></div><div><span className="eyebrow">YOUR NEXT MOVE</span><h2>从目标出发，找到下一步。</h2><p>{applied?.text||"为这次成长挑选合适的资源"}</p></div><div className="smart-result-actions"><button className="button secondary" onClick={()=>setMatch(true)}>调整需求</button><button className="text-link" onClick={reset}>退出推荐</button></div></div>
       <div className="smart-active-filters" aria-label="当前推荐条件"><span>{goalLabels[result.preferences.goal]}</span><span>{result.preferences.location==="全部"?"不限地点":result.preferences.location+(applied?.includeOnline&&!['线上','远程'].includes(result.preferences.location)?" + 线上":"")}</span>{result.preferences.tags.map(t=><span key={t}>{t}</span>)}{result.intent.keywords.map(t=><span key={"keyword-"+t}>{t}</span>)}{result.preferences.level!=="any"&&<span>{result.preferences.level==="beginner"?"入门起步":"进阶提升"}</span>}{result.preferences.horizon!=="any"&&<span>机会截止 {result.preferences.horizon} 天内</span>}{result.preferences.freeOnly&&<span>已注明免费 / 开源</span>}</div>
-      <div className="smart-path">{result.path.map((step,i)=>{const Icon=[BookOpen,Wrench,Flag][i];return <article className={"smart-path-step "+(!step.match?"unavailable":"")} key={step.title}><div className="smart-step-top"><span>0{i+1}</span><Icon size={18}/></div><h3>{step.title}</h3>{step.match?<button onClick={()=>setSelected(step.match!.resource)}>{step.match.resource.title}<ArrowUpRight size={16}/></button>:<p>还没有符合条件的{["课程","工具","实践资源"][i]}，可以调整需求或稍后再看。</p>}</article>})}</div>
+      <div className="smart-path">{result.path.map((step,i)=>{const Icon=[BookOpen,Wrench,Flag][i];return <article className={"smart-path-step "+(!step.match?"unavailable":"")} key={step.title}><div className="smart-step-top"><span>0{i+1}</span><Icon size={18}/></div><h3>{step.title}</h3>{step.match?<button onClick={()=>setSelected(step.match!.resource)} translate="no">{step.match.resource.title}<ArrowUpRight size={16}/></button>:<p>还没有符合条件的{["课程","工具","实践资源"][i]}，可以调整需求或稍后再看。</p>}</article>})}</div>
       <p className="smart-result-footnote">{result.excluded.expired>0?`已避开 ${result.excluded.expired} 项已截止机会。`:"优先推荐仍可参与的机会。"} 具体要求和截止时间以官方信息为准。</p>
       {!hasTarget&&["internship","competition","project"].includes(result.preferences.goal)&&<p className="smart-gap-note">暂时没有符合这些条件的{goalLabels[result.preferences.goal]==="寻找实习"?"实习":result.preferences.goal==="competition"?"赛事":"项目"}，可先从下方学习与工具资源做准备。</p>}
     </Reveal>}
@@ -96,5 +98,5 @@ export default function Discover() {
         <div className="smart-submit-row"><button className="text-link" type="button" onClick={()=>setDraft(initialDraft())}><RotateCcw size={14}/>清空条件</button><button className="button primary" disabled={s.loading}><Sparkles size={17}/>{s.loading?"资源读取中…":"发现适合我的资源"}</button></div><small className="muted">从本站已发布资源中推荐，每项附推荐理由。自动识别后仍可手动调整。</small>
       </form>
     </Modal>
-  </Platform>;
+  </Platform></I18nRegion>;
 }

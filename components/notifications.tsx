@@ -1,4 +1,6 @@
 "use client";
+import {I18nRegion} from "./i18n";
+
 import {useEffect,useState} from 'react';
 import Link from 'next/link';
 import {ArrowUpRight,Bell,Check,CheckCheck,LoaderCircle,RefreshCw} from 'lucide-react';
@@ -25,7 +27,7 @@ export function Notifications() {
     // The read-receipt state is deliberately not a dependency, avoiding retry loops.
   },[open,s.loading,s.user?.id,visibleKey]);
   async function retry(all=false){setPending(true);setError('');try{await s.markNotificationsRead(all?rows:paging.items)}catch(reason){setError((reason as Error).message)}finally{setPending(false)}}
-  return <>
+  return <I18nRegion><>
     <button type="button" className="icon-button notification-button" aria-label="查看通知" title={unread.length?`${unread.length} 条未读通知`:'暂无未读通知'} onClick={()=>{setOpen(true);if(s.connected)void s.reload()}}><Bell size={18}/>{!!unread.length&&<i aria-hidden="true"/>}</button>
     <Modal open={open} onOpenChange={setOpen} title="通知中心">
       <div className="notification-summary"><span role="status">{pending?<><LoaderCircle size={15} className="spin"/>正在同步已读…</>:unread.length?`${unread.length} 条未读`:<><CheckCheck size={16}/>全部已读</>}</span>{!!unread.length&&<button type="button" className="text-link" disabled={pending} onClick={()=>void retry(true)}>全部标为已读</button>}</div>
@@ -39,5 +41,5 @@ export function Notifications() {
       {!rows.length&&<div className="empty-state"><Bell size={32}/><h3>暂时没有通知</h3><p>{s.connected&&!s.user?'登录后可查看报名与组队审核结果。':'报名与组队审核结果会保留在这里。'}</p></div>}
       <Pagination paging={paging} label="通知"/>
     </Modal>
-  </>;
+  </></I18nRegion>;
 }
