@@ -59,3 +59,11 @@ test('English discovery uses the same stored interests and matching rules as Chi
  assert.deepEqual(filterResources(rows,'programming','all','全部','featured').map(r=>r.id),['a']);
  assert.deepEqual(recommendResources(rows,{text:'I want to join a programming competition in Shenzhen within 30 days'},{now:'2026-10-26'}).rows.map(x=>x.resource.id),['a']);
 });
+
+test('Translated request examples contain no accidental keyword restrictions',()=>{
+ for(const text of ['零基础，想学 AI 做作品集，优先线上资源','想在深圳参加编程比赛，30天内报名','想用免费工具做 PPT 和图表']){
+  const intent=understandRequest(translateUi(text,'en'));
+  assert.deepEqual(intent.keywords,[],text);assert.ok(intent.tags.length>0,text);
+ }
+ assert.equal(understandRequest(translateUi('零基础，想学 AI 做作品集，优先线上资源','en')).level,'beginner');
+});

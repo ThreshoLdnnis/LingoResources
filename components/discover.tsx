@@ -1,5 +1,5 @@
 "use client";
-import {I18nRegion} from "./i18n";
+import {I18nRegion,useI18n} from "./i18n";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
@@ -20,7 +20,7 @@ function CityOptions({auto=false}:{auto?:boolean}) {
 }
 
 export default function Discover() {
-  const s=useGrowth();
+  const s=useGrowth();const {t:translate}=useI18n();
   const [query,setQuery]=useState(""),[kind,setKind]=useState("all"),[location,setLocation]=useState("全部"),[sort,setSort]=useState("featured");
   const [selected,setSelected]=useState<Resource|null>(null),[match,setMatch]=useState(false);
   const [draft,setDraft]=useState<MatchPreferences>(initialDraft),[applied,setApplied]=useState<MatchPreferences|null>(null);
@@ -89,7 +89,7 @@ export default function Discover() {
       <p className="muted smart-intro">说出目标和限制，我们一起找一条能开始的成长路径。</p>
       <form className="form-stack smart-match-form" onSubmit={e=>{e.preventDefault();setApplied({...draft,tags:[...(draft.tags||[])]});setKind("all");setQuery("");setLocation("全部");setSort("smart");setMatch(false);}}>
         <label className="smart-request-label">用一句话描述你的想法<textarea aria-label="我的成长需求" value={draft.text} maxLength={600} rows={3} onChange={e=>update({text:e.target.value})} placeholder="例如：我零基础，想在深圳参加编程比赛，优先最近一个月还能报名的活动。"/><span className="smart-input-count">{draft.text?.length||0} / 600</span></label>
-        <div className="smart-examples" aria-label="试试这些需求">{examples.map(t=><button type="button" key={t} onClick={()=>setDraft({...initialDraft(),text:t})}>{t}<ArrowUpRight size={12}/></button>)}</div>
+        <div className="smart-examples" aria-label="试试这些需求">{examples.map(t=><button type="button" key={t} onClick={()=>setDraft({...initialDraft(),text:translate(t)})}>{t}<ArrowUpRight size={12}/></button>)}</div>
         {!!draft.text&&<div className="smart-understood" role="status"><Sparkles size={15}/><div><strong>已识别</strong><div className="smart-understood-tags">{intent.goal&&<span>{goalLabels[intent.goal]}</span>}{intent.tags.map(t=><span key={t}>{t}</span>)}{intent.location&&<span>{intent.location}</span>}{intent.level&&<span>{intent.level==="beginner"?"零基础 / 入门":"进阶"}</span>}{intent.horizon&&<span>{intent.horizon} 天内报名</span>}{intent.freeOnly&&<span>免费 / 开源</span>}{intent.excluded.map(t=><span key={t}>不关注：{t}</span>)}{!intent.goal&&!intent.tags.length&&!intent.location&&<span>可以补充方向或使用下面的选项</span>}</div>{intent.cities.length>1&&<small>识别到多个城市，当前使用 {intent.location}；可在地点选项中调整。</small>}</div></div>}
         <fieldset><legend className="smart-goal-legend"><span>这一次，你想先做什么？</span><button type="button" className="text-link" onClick={()=>update({goal:"auto"})} aria-pressed={draft.goal==="auto"}>自动识别{draft.goal==="auto"?" ✓":""}</button></legend><div className="goal-grid">{goals.map(([v,t,d])=><label className={effectiveGoal===v?"goal selected":"goal"} key={v}><input type="radio" name="goal" checked={effectiveGoal===v} onChange={()=>update({goal:v})} value={v}/><span><strong>{t}</strong><small>{d}</small></span></label>)}</div></fieldset>
         <fieldset><legend>补充兴趣方向（可选）</legend><div className="interest-options">{discoveryInterests.map(t=><button type="button" key={t} aria-pressed={draft.tags?.includes(t)} className={draft.tags?.includes(t)?"chosen":""} onClick={()=>update({tags:draft.tags?.includes(t)?draft.tags.filter(i=>i!==t):[...(draft.tags||[]),t]})}>{t}</button>)}</div></fieldset>
