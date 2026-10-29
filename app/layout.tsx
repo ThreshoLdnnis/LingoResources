@@ -5,6 +5,7 @@ import "./theme.css";
 import "./landing.css";
 import "./refinements.css";
 import "./i18n.css";
+import "./event-cards.css";
 import {I18nProvider} from '@/components/i18n';
 import { brand } from "@/lib/brand";
 import { GrowthProvider } from "@/lib/store";

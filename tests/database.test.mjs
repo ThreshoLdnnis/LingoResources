@@ -60,6 +60,17 @@ await assert.rejects(()=>db.query('insert into public.lesson_progress(user_id,le
 const project='51111111-1111-4111-8111-111111111101';
 await db.query(`insert into public.resources(id,kind,title,subtitle,description,org,location,owner_id,status) values($1,'project','私人草稿','小项目','验证本人能够管理的项目','本人','线上',$2,'draft')`,[project,a]);
 await assert.rejects(()=>db.query('update public.resources set featured=true where id=$1',[project]),/administrator access/);
+await assert.rejects(()=>db.query('update public.resources set beginner_recommended=true where id=$1',[project]),/administrator access/);
+await assert.rejects(()=>db.query(`insert into public.resources(kind,title,subtitle,description,org,location,owner_id,status,beginner_recommended) values('project','越权推荐','项目','普通成员不能推荐自己的项目','本人','线上',$1,'draft',true)`,[a]),/check constraint/);
+await asUser(admin);
+await db.query('update public.resources set beginner_recommended=true where id=$1',[favorite]);
+assert.equal((await db.query('select beginner_recommended from public.resources where id=$1',[favorite])).rows[0].beginner_recommended,true);
+await assert.rejects(()=>db.query('update public.resources set beginner_recommended=true where id=$1',[project]),/check constraint/);
+await asUser(a);
+assert.equal((await db.query('select beginner_recommended from public.resources where id=$1',[favorite])).rows[0].beginner_recommended,true);
+await asUser(null);
+await assert.rejects(()=>db.query('select beginner_recommended from public.resources'),/permission denied/);
+await asUser(a);
 await asUser(b);
 assert.equal((await db.query('select id from public.resources where id=$1',[project])).rows.length,0);
 assert.equal((await db.query('select * from public.favorites')).rows.length,0);

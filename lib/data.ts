@@ -1,7 +1,7 @@
 export type Kind = "competition" | "internship" | "tool" | "course" | "project";
 export type CourseFile = {path:string;name:string;mime:string;size:number};
 export type Lesson = {id:string; title:string; minutes:number; body:string;files?:CourseFile[]};
-export type Resource = { id: string; kind: Kind; title: string; subtitle: string; description: string; org: string; tags: string[]; location: string; deadline: string | null; featured: boolean; status: "published" | "draft"; tone: string; mark: string; meta: string; url?: string; lessons?: Lesson[]; owner_id?:string; application_enabled?:boolean; cover_path?:string|null };
+export type Resource = { id: string; kind: Kind; title: string; subtitle: string; description: string; org: string; tags: string[]; location: string; deadline: string | null; featured: boolean; status: "published" | "draft"; tone: string; mark: string; meta: string; url?: string; lessons?: Lesson[]; owner_id?:string; application_enabled?:boolean; beginner_recommended?:boolean; cover_path?:string|null };
 export type Post = {id:string; author:string; avatar:string; avatar_url?:string; title:string; body:string; tags:string[]; type:"recruitment"|"discussion"; date:string; owner_id?:string; created_at?:string;updated_at?:string;deleted_at?:string|null;resource_id?:string|null};
 export type PostComment = {id:string;post_id:string;owner_id:string;author:string;avatar:string;avatar_url?:string;body:string;created_at:string;updated_at?:string;deleted_at?:string|null};
 export type Application = {id:string; resource_id?:string; post_id?:string; user_id?:string; name?:string; message:string; status:"pending"|"approved"|"rejected"; created_at:string;notification_version?:string};

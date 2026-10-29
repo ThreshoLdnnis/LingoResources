@@ -1,0 +1,88 @@
+/* Event tones are editorial choices. Keep them local to event cards so that
+   courses, tools, personal pages, and the surrounding theme retain their palette. */
+.resource-card.event-card {
+  --event-bg: var(--surface);
+  --event-border: var(--line);
+  --muted: #626c65;
+  background: var(--event-bg);
+  border-color: var(--event-border);
+}
+
+.event-card.tone-pink { --event-bg: #fff0f5; --event-border: #ecd6df; }
+.event-card.tone-purple { --event-bg: #f3effc; --event-border: #ded6ee; }
+.event-card.tone-green { --event-bg: #edf5ef; --event-border: #d5e3d8; }
+.event-card.tone-blue { --event-bg: #edf6fd; --event-border: #d4e3ef; }
+.event-card.tone-yellow { --event-bg: #fff8e5; --event-border: #eaddb9; }
+.event-card.tone-neutral { --event-bg: var(--surface); --event-border: var(--line); }
+
+:root[data-theme="dark"] .resource-card.event-card { --muted: #a9b4ae; }
+:root[data-theme="dark"] .event-card.tone-pink { --event-bg: #30222b; --event-border: #58404d; }
+:root[data-theme="dark"] .event-card.tone-purple { --event-bg: #29243a; --event-border: #4e4365; }
+:root[data-theme="dark"] .event-card.tone-green { --event-bg: #22352b; --event-border: #3d5748; }
+:root[data-theme="dark"] .event-card.tone-blue { --event-bg: #22313f; --event-border: #3d5469; }
+:root[data-theme="dark"] .event-card.tone-yellow { --event-bg: #3a3222; --event-border: #5f5235; }
+
+.resource-card.event-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--event-border));
+}
+.event-card .card-bottom {
+  border-color: var(--event-border);
+}
+.event-card .tags > span {
+  background: color-mix(in srgb, var(--surface) 65%, var(--event-bg));
+}
+.event-card .competition-cover {
+  background: color-mix(in srgb, var(--surface) 60%, var(--event-bg));
+}
+
+.beginner-events-heading {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.beginner-events-heading > div:first-child {
+  flex: 1 1 500px;
+  min-width: 0;
+}
+.beginner-events-heading h2 {
+  display: block;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.beginner-events-heading p {
+  color: var(--muted);
+  font-size: .875rem;
+  line-height: 1.8;
+  margin-top: 8px;
+}
+.beginner-events-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: center;
+  padding-top: 7px;
+}
+.beginner-events-actions > a {
+  font-size: .8125rem;
+}
+.beginner-events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 19px;
+}
+.beginner-events-grid .resource-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.beginner-events-grid .card-bottom {
+  margin-top: auto;
+}
+.beginner-events-grid .tags {
+  margin-bottom: 18px;
+}
+
+@media (max-width: 650px) {
+  .beginner-events-heading > div:first-child { flex-basis: 100%; }
+  .beginner-events-actions { padding-top: 0; }
+  .beginner-events-grid { gap: 14px; }
+}

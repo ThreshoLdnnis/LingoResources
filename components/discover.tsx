@@ -29,6 +29,7 @@ export default function Discover() {
     const p=new URLSearchParams(window.location.search);
     if(p.get("match")==="1")setMatch(true);
     if(p.get("q"))setQuery(p.get("q")!);
+    const initialKind=p.get("kind");if(initialKind&&["competition","internship","tool","course","project"].includes(initialKind))setKind(initialKind);
   },[]);
   useEffect(()=>{
     if(account.current!==s.user?.id){account.current=s.user?.id;setApplied(null);setDraft(initialDraft());setSort("featured");}
