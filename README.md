@@ -1,6 +1,7 @@
 # 翎语 Lingo
 
 **走出信息边界，发现更多可能。**
+！[fm](https://github.com/ThreshoLdnnis/LingoResources/issues/1)
 
 面向大学生的机会发现、课程学习、项目实践和社区组队平台。本仓库保存现有官网的应用源码、数据库迁移、示例数据与自动化测试。
 
