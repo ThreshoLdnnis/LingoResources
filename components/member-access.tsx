@@ -26,8 +26,8 @@ export function MemberBoundary({ children }: { children: ReactNode }) {
     <main className="member-access-card">
       {s.loading ? <><LoaderCircle size={30} className="spin"/><h1>正在确认登录状态…</h1><p>稍等一下，你的下一段奇遇即将开启。</p></> : <>
         <span className="member-access-icon"><LockKeyhole size={26}/></span><span className="eyebrow">YOUR NEXT CHAPTER STARTS HERE</span>
-        <h1>登录翎语，<br/>开启下一段奇遇。</h1><p>资源、课程、项目与社区向已登录成员开放。<br/>使用已有账号登录，或凭内测码受邀注册。</p>
-        <div className="member-access-actions"><button className="button primary" onClick={() => open("login")}>登录并继续<ArrowUpRight size={17}/></button><button className="button secondary" onClick={() => open("signup")}>有内测码？受邀注册</button></div>
+        <h1>登录翎语，<br/>开启下一段奇遇。</h1><p>资源、课程、项目与社区向已登录成员开放。<br/>使用已有账号登录，或用邮箱注册新账号。</p>
+        <div className="member-access-actions"><button className="button primary" onClick={() => open("login")}>登录并继续<ArrowUpRight size={17}/></button><button className="button secondary" onClick={() => open("signup")}>邮箱注册</button></div>
         {s.error && <p className="form-error" role="alert">暂时无法确认登录状态。<button className="text-button" onClick={() => void s.reload()}>重新连接</button></p>}
       </>}
     </main>

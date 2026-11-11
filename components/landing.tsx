@@ -56,7 +56,7 @@ function ProfileScene() {
 
 const faqs = [
   ["翎语适合谁？","适合正在探索方向的大学生和年轻人。想找一个比赛、学会一个工具、认识项目伙伴，或者整理自己的经历，都可以从这里开始。"],
-  ["现在需要内测码吗？","平台介绍页无需登录。资源、课程、项目与社区内容需注册并登录后查看。首次注册需要邀请人提供的 8 位内测码，每个码仅限创建一个账号；已有账号直接登录即可。"],
+  ["如何注册并开始探索？","平台介绍页无需登录。用邮箱和密码注册，完成邮箱确认后即可登录，查看资源、课程、项目与社区内容；已有账号直接登录即可。"],
   ["参加赛事或申请实习，需要怎么做？","赛事和实习信息会提供对应的官方链接，具体规则与申请以主办方或招聘方为准。你也可以把赛事转发到社区寻找队友。仅对平台明确开放站内报名的活动，才能在站内提交申请。"],
   ["需要下载 App 吗？","当前使用浏览器就能打开翎语，电脑和手机都可以访问。登录后即可浏览资源、阅读课件、记录学习进度或参与社区交流。"],
 ];
@@ -70,16 +70,16 @@ export default function Landing() {
   useEffect(()=>{setDark(document.documentElement.dataset.theme==="dark");const elements=root.current?.querySelectorAll<HTMLElement>("[data-intro-motion]");if(!elements||!('IntersectionObserver' in window))return;const observer=new IntersectionObserver(entries=>entries.forEach(entry=>(entry.target as HTMLElement).dataset.active=String(entry.isIntersecting)),{threshold:.1});elements.forEach(element=>observer.observe(element));return()=>observer.disconnect();},[]);
   function toggleTheme(){const value=!dark;setDark(value);document.documentElement.dataset.theme=value?"dark":"light";localStorage.setItem("zongmen-theme",value?"dark":"light");}
   function openAuth(next:"login"|"signup"){setMode(next);setMenu(false);setAuth(true);}
-  const join=s.user?<MemberLink className="intro-button intro-button-dark" href="/explore/">回到我的平台<ArrowUpRight size={18}/></MemberLink>:<button className="intro-button intro-button-dark" onClick={()=>openAuth("signup")}>有内测码？加入翎语<ArrowUpRight size={18}/></button>;
+  const join=s.user?<MemberLink className="intro-button intro-button-dark" href="/explore/">回到我的平台<ArrowUpRight size={18}/></MemberLink>:<button className="intro-button intro-button-dark" onClick={()=>openAuth("signup")}>注册账号，加入翎语<ArrowUpRight size={18}/></button>;
   return <I18nRegion><div className="intro-page" ref={root}>
     <a href="#intro-main" className="skip-link">跳到正文</a>
     <header className="intro-header"><div className="intro-nav-wrap"><Link className="intro-brand" href="/" aria-label="翎语 Lingo 官网首页"><Logo/><span><b>{brand.englishName}</b><small>{brand.name}</small></span></Link>
       <nav aria-label="官网导航" className={menu?"is-open":""}><a href="#why-lingo" onClick={()=>setMenu(false)}>认识翎语</a><a href="#possibilities" onClick={()=>setMenu(false)}>发现可能</a><a href="#get-started" onClick={()=>setMenu(false)}>如何开始</a></nav>
-      <div className="intro-header-actions"><LanguageToggle/><button className="intro-theme" onClick={toggleTheme} aria-label={dark?"切换浅色模式":"切换深色模式"}>{dark?<Sun size={19}/>:<Moon size={19}/>}</button>{s.user?<MemberLink className="intro-login" href="/explore/">进入平台<ArrowUpRight size={16}/></MemberLink>:<><button className="intro-login" onClick={()=>openAuth("login")}>登录<ArrowUpRight size={16}/></button><button className="intro-header-join" onClick={()=>openAuth("signup")}>受邀注册</button></>}<button className="intro-menu" aria-label="切换官网导航" aria-expanded={menu} onClick={()=>setMenu(!menu)}>{menu?<X size={21}/>:<Menu size={21}/>}</button></div>
+      <div className="intro-header-actions"><LanguageToggle/><button className="intro-theme" onClick={toggleTheme} aria-label={dark?"切换浅色模式":"切换深色模式"}>{dark?<Sun size={19}/>:<Moon size={19}/>}</button>{s.user?<MemberLink className="intro-login" href="/explore/">进入平台<ArrowUpRight size={16}/></MemberLink>:<><button className="intro-login" onClick={()=>openAuth("login")}>登录<ArrowUpRight size={16}/></button><button className="intro-header-join" onClick={()=>openAuth("signup")}>邮箱注册</button></>}<button className="intro-menu" aria-label="切换官网导航" aria-expanded={menu} onClick={()=>setMenu(!menu)}>{menu?<X size={21}/>:<Menu size={21}/>}</button></div>
     </div></header>
     <main id="intro-main">
       <section className="intro-hero intro-container" aria-labelledby="intro-title">
-        <div className="intro-hero-copy"><span className="intro-eyebrow"><i/>为好奇而来，为可能出发</span><IntroTitle/><p>走出信息边界，发现更多可能。<br/>翎语把机会、技能与伙伴连接起来，<br className="intro-desktop-break"/>陪你把“我想试试”，变成“这件事，我做过”。</p><div className="intro-hero-actions"><MemberLink href="/explore/" className="intro-button intro-button-dark">在浏览器中打开翎语<ArrowUpRight size={19}/></MemberLink><button className="intro-button intro-button-light" onClick={()=>openAuth(s.user?"login":"signup")}>{s.user?"管理我的账号":"使用内测码注册"}<Plus size={17}/></button></div><span className="intro-hero-footnote">为大学生打造的 Personal Growth OS</span></div>
+        <div className="intro-hero-copy"><span className="intro-eyebrow"><i/>为好奇而来，为可能出发</span><IntroTitle/><p>走出信息边界，发现更多可能。<br/>翎语把机会、技能与伙伴连接起来，<br className="intro-desktop-break"/>陪你把“我想试试”，变成“这件事，我做过”。</p><div className="intro-hero-actions"><MemberLink href="/explore/" className="intro-button intro-button-dark">在浏览器中打开翎语<ArrowUpRight size={19}/></MemberLink><button className="intro-button intro-button-light" onClick={()=>openAuth(s.user?"login":"signup")}>{s.user?"管理我的账号":"邮箱注册"}<Plus size={17}/></button></div><span className="intro-hero-footnote">为大学生打造的 Personal Growth OS</span></div>
         <div className={"intro-hero-visual intro-tone-"+current.tone} data-intro-motion data-active="false"><div className="intro-orbit intro-orbit-one"/><div className="intro-orbit intro-orbit-two"/><span className="intro-orbit-label">GO BEYOND WHAT YOU KNOW</span><Spark className="intro-orbit-star"/>
           <IntroDeck order={deckOrder} onSelect={selectDoor}/><div className="intro-floating-label"><i/><span>你的下一种可能，正在展开。</span></div>
         </div>
@@ -96,7 +96,7 @@ export default function Landing() {
         <p className="intro-illustration-note">以上为功能示意，实际内容以平台内发布为准。</p>
       </div>
 
-      <section id="get-started" className="intro-start intro-container"><Reveal><span className="intro-eyebrow">SMALL STARTS. REAL POSSIBILITIES.</span><h2>不用准备好一切，<br/>先迈出有意思的一步。</h2></Reveal><ol className="intro-steps"><li><span>01</span><Compass size={24}/><h3>认识翎语</h3><p>看看平台介绍，找到让你好奇的方向。</p></li><li><span>02</span><GraduationCap size={24}/><h3>留下自己的起点</h3><p>用内测码注册并确认邮箱，登录后开始探索。</p></li><li><span>03</span><ArrowUpRight size={24}/><h3>然后，去做点什么</h3><p>学个新技能，认识新伙伴，完成新作品。</p></li></ol></section>
+      <section id="get-started" className="intro-start intro-container"><Reveal><span className="intro-eyebrow">SMALL STARTS. REAL POSSIBILITIES.</span><h2>不用准备好一切，<br/>先迈出有意思的一步。</h2></Reveal><ol className="intro-steps"><li><span>01</span><Compass size={24}/><h3>认识翎语</h3><p>看看平台介绍，找到让你好奇的方向。</p></li><li><span>02</span><GraduationCap size={24}/><h3>留下自己的起点</h3><p>用邮箱注册并完成邮箱确认，登录后开始探索。</p></li><li><span>03</span><ArrowUpRight size={24}/><h3>然后，去做点什么</h3><p>学个新技能，认识新伙伴，完成新作品。</p></li></ol></section>
 
       <section className="intro-faq intro-container" aria-labelledby="intro-faq-title"><div><span className="intro-eyebrow">GOOD QUESTIONS</span><h2 id="intro-faq-title">出发前，<br/>你可能想知道。</h2><Spark/></div><div className="intro-faq-list">{faqs.map(([question,answer])=><details key={question}><summary>{question}<ChevronDown size={19}/></summary><p>{answer}</p></details>)}</div></section>
 

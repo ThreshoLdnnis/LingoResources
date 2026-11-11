@@ -19,7 +19,7 @@ test('Protected routes never render member content while signed out or checking 
  assert.match(render(),/MEMBER_ONLY_LESSON_BODY/);
  for(const route of ['explore','discover','learn','projects','community','profile','admin']){
   pathname='/'+route+'/';state={user:null,loading:false};
-  assert.doesNotMatch(render(),/MEMBER_ONLY_LESSON_BODY/);assert.match(render(),/受邀注册/);
+  assert.doesNotMatch(render(),/MEMBER_ONLY_LESSON_BODY/);assert.match(render(),/邮箱注册/);
   state={user:null,loading:true};assert.doesNotMatch(render(),/MEMBER_ONLY_LESSON_BODY/);assert.match(render(),/确认登录状态/);
   state={user:{id:'member'},loading:false};assert.match(render(),/MEMBER_ONLY_LESSON_BODY/);
  }

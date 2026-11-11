@@ -16,7 +16,12 @@ alter table storage.objects enable row level security;
 create function storage.foldername(name text) returns text[] language sql immutable as $$select string_to_array(name,'/')$$;
 grant select,insert,delete on storage.objects to anon,authenticated;`);
 const migrations=new URL('../supabase/migrations/',import.meta.url);
-for(const file of (await fs.readdir(migrations)).filter(f=>f.endsWith('.sql')).sort()){
+const migrationFiles=(await fs.readdir(migrations)).filter(f=>f.endsWith('.sql')).sort();
+const openRegistrationFiles=migrationFiles.filter(file=>file.endsWith('_open_email_registration.sql'));
+assert.equal(openRegistrationFiles.length,1,'The open registration migration must be included in this integration test');
+// Prove the legacy invitation rules before migrating the same database to open
+// registration; all remaining ownership and member-only checks use the final schema.
+for(const file of migrationFiles.filter(file=>!openRegistrationFiles.includes(file))){
 await db.exec(await fs.readFile(new URL(file,migrations),'utf8'));
 }
 assert.equal((await db.query("select to_regprocedure('public.is_admin()') as exposed")).rows[0].exposed,null);
@@ -160,6 +165,59 @@ await db.query('insert into auth.users(id,raw_user_meta_data) values(gen_random_
 await assert.rejects(()=>db.query('insert into auth.users(id,raw_user_meta_data) values(gen_random_uuid(),$1)',[{beta_invite_code:invites[0].code}]),/BETA_INVITE_INVALID/);
 await asUser(admin);
 assert.ok((await db.query('select * from public.list_beta_invites()')).rows.every(i=>!Object.hasOwn(i,'code_hash')&&!Object.hasOwn(i,'code')));
+
+// Public email registration replaces the signup gate without modifying historical
+// invitation records, existing accounts, or authorization policy.
+await db.exec('reset role');
+await db.query("select set_config('test.uid','',false)");
+const unusedCode='86420975';
+await db.query("insert into private.beta_invites(code_hash,code_hint,display_code,label,expires_at) values(private.beta_invite_hash($1),'8D-86…75',$1,'历史未使用',now()+interval '365 days')",[unusedCode]);
+const inviteSnapshot=(await db.query('select * from private.beta_invites order by id')).rows;
+const existingProfileSnapshot=(await db.query('select * from public.profiles order by id')).rows;
+for(const file of openRegistrationFiles)await db.exec(await fs.readFile(new URL(file,migrations),'utf8'));
+assert.deepEqual((await db.query('select * from private.beta_invites order by id')).rows,inviteSnapshot);
+assert.deepEqual((await db.query('select * from public.profiles order by id')).rows,existingProfileSnapshot);
+const openMembers=[];
+for(const [index,metadata] of [
+ {name:'邮箱注册同学'},
+ {name:'旧页面无效码',beta_invite_code:'INVALID-LEGACY-CODE'},
+ {name:'旧页面已使用码',beta_invite_code:invites[0].code},
+ {name:'旧页面已停用码',beta_invite_code:invites[1].code},
+ {name:'旧页面已过期码',beta_invite_code:invites[2].code},
+ {name:'旧页面未使用码',beta_invite_code:unusedCode},
+ {name:'不能自行提权',role:'admin',is_admin:true,user_role:'admin',app_metadata:{role:'admin'}}
+].entries()){
+ const id='42111111-1111-4111-8111-11111111110'+index;
+ openMembers.push(id);
+ await db.query('insert into auth.users(id,email,raw_user_meta_data) values($1,$2,$3)',[id,'open-'+index+'@example.invalid',metadata]);
+ const profile=(await db.query('select name,role from public.profiles where id=$1',[id])).rows[0];
+ assert.deepEqual(profile,{name:metadata.name,role:'user'},'public signups always receive the default member rights');
+ const stored=(await db.query('select raw_user_meta_data from auth.users where id=$1',[id])).rows[0].raw_user_meta_data;
+ assert.equal(Object.hasOwn(stored,'beta_invite_code'),false,'legacy clients must not retain invitation codes in user metadata');
+}
+assert.deepEqual((await db.query('select * from private.beta_invites order by id')).rows,inviteSnapshot,'open signups must never consume or alter invitation history');
+assert.deepEqual((await db.query('select * from public.profiles where id=any($1::uuid[]) order by id',[existingProfileSnapshot.map(profile=>profile.id)])).rows,existingProfileSnapshot,'existing accounts and roles survive the signup change');
+for(const id of openMembers){
+ await asUser(id);
+ assert.equal((await db.query('select private.is_admin() as allowed')).rows[0].allowed,false);
+ await assert.rejects(()=>db.query('select * from public.list_registered_users()'),/Administrator access required/);
+ await assert.rejects(()=>db.query('select * from public.list_beta_invites_v2()'),/Administrator access required/);
+ await assert.rejects(()=>db.query('select code_hash from private.beta_invites'),/permission denied/);
+ await assert.rejects(()=>db.query("update public.profiles set role='admin' where id=$1",[id]),/permission denied/);
+}
+await asUser(openMembers[0]);
+await db.query("update public.profiles set bio='刚加入，也只能编辑自己的个人资料。' where id=$1",[openMembers[0]]);
+assert.equal((await db.query('select bio from public.profiles where id=$1',[openMembers[0]])).rows[0].bio,'刚加入，也只能编辑自己的个人资料。');
+assert.equal((await db.query("update public.profiles set bio='不能改别人的资料' where id=$1 returning id",[a])).rows.length,0);
+assert.equal((await db.query('select id from public.resources where id=$1',[project])).rows.length,0,'open signups cannot read another member’s private draft');
+await db.query('insert into public.favorites(user_id,resource_id) values($1,$2)',[openMembers[0],favorite]);
+await assert.rejects(()=>db.query('insert into public.favorites(user_id,resource_id) values($1,$2)',[b,favorite]),/row-level security/);
+await assert.rejects(()=>db.query("insert into storage.objects(bucket_id,name) values('course-files',$1)",[favorite+'/21111111-1111-4111-8111-111111111101/81111111-1111-4111-8111-111111111199.pdf']),/row-level security/);
+await asUser(null);
+for(const table of ['resources','posts','post_comments','profiles'])await assert.rejects(()=>db.query('select id from public.'+table),/permission denied/);
+await assert.rejects(()=>db.query('select * from public.list_beta_invites_v2()'),/permission denied/);
+await asUser(admin);
+assert.equal((await db.query('select private.is_admin() as allowed')).rows[0].allowed,true);
 await db.query("update public.resources set status='published' where id=$1",[project]);
 await asUser(b);
 await assert.rejects(()=>db.query("insert into public.applications(user_id,resource_id,name,message) values($1,$2,'申请人','这份活动尚未开放平台直接报名')",[b,project]),/row-level security/);
